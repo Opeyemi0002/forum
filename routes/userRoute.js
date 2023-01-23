@@ -105,8 +105,8 @@ router.patch('/:id', async (req, res) => {
         if(email) userFind.email = email;
         if(password) userFind.password = password;
          
-        res.json({message: "the user update has been updated successfully"});
-        //res.send (req.body);
+        //res.json({message: "the user update has been updated successfully"});
+        res.send (userFind);
         }catch(error) {
         console.log (error.message);
 
