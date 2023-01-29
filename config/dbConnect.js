@@ -1,12 +1,12 @@
-import mongooose from "mongoose";
+import mongoose from "mongoose";
 
 export const dbConnect = async ()=> {
-    try{
-        mongooose.set("strictQuery", false);
-        await mongooose.connect(process.env.MONGODB_URL);
-        console.log('Database connected succesfully');
-    }catch(error){
-        console.log(error.message);
-        process.exit(1);
-    }
+  try{
+    mongoose.set("strictQuery", false);
+    await mongoose.connect(process.env.MONGODB_URL);
+    console.log("you are connected succcesfully");
+  }catch(error) {
+    console.log(error.message);
+    process.exit(1);
+  }
 }
