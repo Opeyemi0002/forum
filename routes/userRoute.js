@@ -1,7 +1,13 @@
 import express from "express";
-import { registerUser, loginUser, getUser, userDelete, updateUser } from "../controllers/usercontroller.js";
+import { registerUser, loginUser, getUser, profilePhotoUpload,userDelete, updateUser } from "../controllers/usercontroller.js";
 import isLogin from "../middleware/islogin.js";
+import multer from "multer";
+import storage from "../config/cloudinary.js";
+
+
 const router = express.Router();
+
+const upload = multer({storage});
 
 //register
 router.post ('/register', registerUser);
@@ -20,6 +26,7 @@ router.delete('/:id', userDelete);
 
 router.patch('/:id', updateUser );
 
-
+//profile photo upload
+router.post('/profile-pix',isLogin,upload.single('profile'), profilePhotoUpload );
 
 export default router;

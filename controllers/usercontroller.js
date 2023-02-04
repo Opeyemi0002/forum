@@ -116,3 +116,31 @@ export const updateUser =async (req, res) => {
     }
     
 }
+export const profilePhotoUpload = async (req,res) => {
+    //console.log(req.file); 
+    try{
+        
+        const userDetails = await User.findById(req.userAuth);
+        
+        if (!userDetails) {
+            res.json({status:"error", message:"user not found"})
+        }
+
+        if(req.file) {
+        await User.findByIdAndUpdate(req.userAuth,{
+            $set:{
+                profilephoto:req.file.path
+            }
+        }, {new:true});
+        res.json({
+            success: "success",
+            message: "image uploaded successfully"
+        });
+
+        }
+        
+        
+    }catch(error){
+        console.log(error.message);
+    }
+}

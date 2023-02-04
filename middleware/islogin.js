@@ -11,7 +11,7 @@ const isLogin = (req,res,next) => {
         return res.json({
             status:"error",
             message:"kindly login because the token is either expired or invalid"
-        })
+        });
     }else{
         next();
     }
