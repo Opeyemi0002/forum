@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, getUser, profilePhotoUpload,userDelete, updateUser } from "../controllers/usercontroller.js";
+import { registerUser, loginUser, getUser, profileViewLogic,followCtrl,profilePhotoUpload,userDelete, updateUser } from "../controllers/usercontroller.js";
 import isLogin from "../middleware/islogin.js";
 import multer from "multer";
 import storage from "../config/cloudinary.js";
@@ -28,5 +28,9 @@ router.patch('/:id', updateUser );
 
 //profile photo upload
 router.post('/profile-pix',isLogin,upload.single('profile'), profilePhotoUpload );
+//profie viewer
+router.get('/viewer-profile/:id', isLogin, profileViewLogic);
+// follow and followers
+router.get('/followers/:id', isLogin, followCtrl);
 
 export default router;

@@ -144,3 +144,71 @@ export const profilePhotoUpload = async (req,res) => {
         console.log(error.message);
     }
 }
+export const profileViewLogic = async (req,res) => {
+    try{
+        const profileOwner = await User.findById(req.params.id);
+        const profileViewer = await User.findById(req.userAuth);
+
+        if(profileOwner && profileViewer) {
+            const profileThatWasViewed = profileOwner.views.find(view=> view.toString()===profileViewer._id.toString());
+            if(profileThatWasViewed) {
+                res.json({
+                    status:"error",
+                    message: "you have viewed this profile"
+                });
+            }else {
+                profileOwner.views.push(profileViewer._id);
+                await profileOwner.save();
+                
+                res.json({
+                    status:"success",
+                    data: {
+                        firstname:profileOwner.firstname,
+                        lastname:profileOwner.lastname,
+                        id:profileOwner._id
+
+                    }
+                });
+            }
+        }
+        
+    }catch(error) {
+        console.log(error.message);
+    }
+}
+export const followCtrl = async (req,res) => {
+    try{
+        const profileBeingFollowed = await User.findById(req.params.id);
+        const profileFollowing = await User.findById(req.userAuth);
+
+        if(profileBeingFollowed && profileFollowing) {
+            const profileThatWasFollowed = profileBeingFollowed.followers.find(view=> view.toString()===profileFollowing._id.toString());
+            if(profileThatWasFollowed) {
+                res.json({
+                    status:"error",
+                    message: "you have followed this profile"
+                });
+            }else {
+                profileBeingFollowed.followers.push(profileFollowing._id);
+                await profileBeingFollowed.save();
+
+                profileFollowing.following.push(profileBeingFollowed._id);
+                await profileFollowing.save();
+
+                res.json({
+                    message: `you have just followed ${profileBeingFollowed.firstname}`
+                });
+            }
+        }
+
+    }catch(error){
+        res.json({message:error.message});
+    }
+}
+// export const unFollow = async (req,res) => {
+//     try{
+//        const userToUnfollow =  
+//     }catch(error) {
+//         res.json({message: error.message});
+//     }
+// }
