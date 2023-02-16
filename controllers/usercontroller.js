@@ -205,10 +205,68 @@ export const followCtrl = async (req,res) => {
         res.json({message:error.message});
     }
 }
-// export const unFollow = async (req,res) => {
-//     try{
-//        const userToUnfollow =  
-//     }catch(error) {
-//         res.json({message: error.message});
-//     }
-// }
+export const unFollowCtrl = async (req,res) => {
+    try{
+       const userToUnfollow = await User.findById(req.params.id);
+       const userUnfollowing = await User.findById(req.userAuth); 
+
+       if (userToUnfollow && userUnfollowing) {
+        const checkFollowingStatus = userUnfollowing.following.find(following=>following.toString()===userToUnfollow._id.toString());
+
+        if(checkFollowingStatus) {
+            userToUnfollow.followers = userToUnfollow.followers.filter(follower=>follower.toString() !== userUnfollowing._id.toString());
+            await userToUnfollow.save();
+
+            userUnfollowing.following = userUnfollowing.following.filter(following=>following.toString() !== userToUnfollow._id.toString());
+            await userUnfollowing.save();
+
+            return res.json({message:`you have unfollow ${userToUnfollow.lastname}`});
+        }else{
+            return res.json({message: "you are not following this profile"});
+        }
+       }
+    }catch(error) {
+        res.json({message: error.message});
+    }
+}
+
+export const blockUser = async (req,res) => {
+    try{
+        const userToBlock = await User.findById(req.params.id);
+        const userBlocking = await User.findById(req.userAuth);
+
+        if(userToBlock && userBlocking) {
+          const isUserBlock =  userBlocking.Blocked.find(block=> block.toString()===userToBlock._id.toString()); 
+
+          if(isUserBlock) {
+            return res.json({message:`you have block ${userToBlock.firstname} already`});
+          }else{
+            userBlocking.Blocked.push(userToBlock._id);
+            await userBlocking.save();
+            return res.json({message:`you have just block ${userToBlock.firstname}`})
+          }
+        }
+    }catch(error) {
+        res.json({message:error.message});
+    }
+}
+export const unBlockUser = async (req,res) => {
+    try{
+        const userToUnblock = await User.findById(req.params.id);
+        const userUnblocking = await User.findById(req.userAuth);
+        if(userToUnblock && userUnblocking ) {
+            const isUserUnblock = userUnblocking.Blocked.find(unblocked=> unblocked.toString()===userToUnblock._id.toString());
+
+            if (!isUserUnblock) {
+                return res.json({message: `you did not block ${userToUnblock.firstname}`});
+            }else{
+                userUnblocking.Blocked = userUnblocking.Blocked.filter(user=>user.toString()!==userToUnblock._id.toString());
+                await userUnblocking.save();
+
+                res.json({message:`you have unblock ${userToUnblock.firstname} successfully`})
+            }
+        }
+    }catch(error){
+        res.json({message:error.message});
+    }
+}
